@@ -800,7 +800,7 @@ w=ele(4)*deg2rad
 om=ele(5)*deg2rad
 ma=ele(6)*deg2rad
 
-cappaq=mass_primiary+mass_secondary
+cappaq=mass_primary+mass_secondary
 
  IF (E .EQ.0._wp)  then
     w  = 0._wp
@@ -1005,13 +1005,13 @@ end subroutine
 
 !...Calculates Keplerian Orbital Elements from heliocentric position and velocity vectors
 
-SUBROUTINE rv2kema (rv,ele,m0,m1)
+SUBROUTINE rv2kema (rv,ele,mass_primary_msun,mass_secondary_msun)
 use const_m, only: gk,rad2deg,deg2rad,pi,pix2
 
 implicit none
 
 real(kind=wp),dimension(1:6),intent(in)::rv     
-real(kind=wp),intent(in)::m0,m1
+real(kind=wp),intent(in)::mass_primary_msun,mass_secondary_msun
 
 real(kind=wp),dimension(1:6),intent(out)::ele
 
@@ -1026,9 +1026,9 @@ real(kind=wp),dimension(1:3)::LRL,L,r,v,H,node,rU
 real(kind=wp)::cappaq,a,e,incl,om,gom,mmm,L2,rnorm,nnorm
 
 !determine mass coefficients for orbit (units: solar masses)
-cappaq=m0+m1
+cappaq=mass_primary_msun+mass_secondary_msun
 
-write(*,*)'cappaq',cappaq
+!write(*,*)'cappaq',cappaq
 r=rv(1:3)
 v=rv(4:6)/gk
          
