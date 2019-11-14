@@ -770,20 +770,19 @@ end if
 END  subroutine
 !****************************************
 
-SUBROUTINE kema2rv(ele,rv,deg,m0,m1)
+SUBROUTINE kema2rv(ele,rv,mass_primary,mass_secondary)
 !------------------------------------------------------------------------------------------------------------
 !transforms Keplerian orbital elements ele (a,e,i,w,Omega, mean anomaly) to Cartesian positions and velocities
 !
 ! written by Siegfried EGGL  20161208
 !
-! standard input of angles is [rad], with the option of having [deg]
+! standard input of angles is [deg]
 !------------------------------------------------------------------------------------------------------------
         
         implicit none   
         
 real(kind=wp),dimension(1:6),intent(in)::ele
-logical,optional,intent(in)::deg
-real(kind=wp),optional,intent(in)::m0,m1
+real(kind=wp),intent(in)::mass_primary,mass_secondary
 
 real(kind=wp),dimension(1:6),intent(out)::rv
         
@@ -796,37 +795,12 @@ real(kind=wp)::sq1me2,denom
 
 a=ele(1)
 e=ele(2)
+incl=ele(3)*deg2rad
+w=ele(4)*deg2rad
+om=ele(5)*deg2rad
+ma=ele(6)*deg2rad
 
-if(present(deg)) then
- if(deg) then
-   incl=ele(3)*deg2rad
-   w=ele(4)*deg2rad
-   om=ele(5)*deg2rad
-   ma=ele(6)*deg2rad
-  else
-   incl=ele(3)
-   w=ele(4)
-   om=ele(5)
-   ma=ele(6)
-  end if
-        else   
-incl=ele(3)
-w=ele(4)
-om=ele(5)
-ma=ele(6)   
-        end if
-
-IF(present(m0)) then
- cappaq=m0   
-else
- cappaq=1._wp
-end if
-
-IF(present(m1)) then
- cappaq=m0+m1
-end if
-
-
+cappaq=mass_primiary+mass_secondary
 
  IF (E .EQ.0._wp)  then
     w  = 0._wp
