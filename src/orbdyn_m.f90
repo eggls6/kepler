@@ -660,20 +660,19 @@ return
 end subroutine
 
 !*******************************************
-SUBROUTINE keta2rv(ele,rv,deg,m0,m1)
+SUBROUTINE keta2rv(ele,rv,m0,m1)
 !------------------------------------------------------------------------------------------------------------
 !transforms Keplerian orbital elements ele (a,e,i,w,Omega,true anomaly) to Cartesian positions and velocities
 !
 ! written by Siegfried EGGL  20161117
 !
-! standard input of angles is [rad], with the option of having [deg]
+! standard input of angles is [deg]
 !------------------------------------------------------------------------------------------------------------
         
 implicit none   
         
 real(kind=wp),dimension(1:6),intent(in)::ele
-logical,optional,intent(in)::deg
-real(kind=wp),optional,intent(in)::m0,m1
+real(kind=wp),intent(in)::m0,m1
 
 real(kind=wp),dimension(1:6),intent(out)::rv
         
@@ -685,35 +684,12 @@ real(kind=wp)::costa,sq1me2,denom
         
 a=ele(1)
 e=ele(2)
+incl=ele(3)*deg2rad
+w=ele(4)*deg2rad
+om=ele(5)*deg2rad
+ta=ele(6)*deg2rad
 
-if(present(deg)) then
- if(deg) then
-   incl=ele(3)*deg2rad
-   w=ele(4)*deg2rad
-   om=ele(5)*deg2rad
-   ta=ele(6)*deg2rad
-  else
-   incl=ele(3)
-   w=ele(4)
-   om=ele(5)
-   ta=ele(6)
-  end if
-        else   
-incl=ele(3)
-w=ele(4)
-om=ele(5)
-ta=ele(6)   
-end if
-
-IF(present(m0)) then
- cappaq=m0   
-else
- cappaq=1._wp
-end if
-
-IF(present(m1)) then
- cappaq=m0+m1
-end if
+cappaq=m0+m1
 
  IF (E .EQ.0._wp)  then
     w  = 0._wp
@@ -858,23 +834,22 @@ END  subroutine
 
 !******************************************************      
       
-subroutine orb_dist_ta(ke1,ke2,dr,dv,deg,m0,m1,m2)
+subroutine orb_dist_ta(ke1,ke2,dr,dv,m0,m1,m2)
 !calculates the distance between two particles on heliocentric orbits with Keplerian elements ke1 and ke2
 !ke1=(a,e,i,w,OM,true anomaly)
 !
 implicit none
 
 real(kind=wp),dimension(1:6),intent(in)::ke1,ke2
-logical,optional,intent(in)::deg
-real(kind=wp),optional,intent(in)::m0,m1,m2
+real(kind=wp),intent(in)::m0,m1,m2
 
 real(kind=wp),intent(out)::dr,dv
 
 real(kind=wp),dimension(1:6)::rv1,rv2
 real(kind=wp),dimension(1:3)::dp,du
 
-call keta2rv(ke1,rv1,deg,m0,m1)
-call keta2rv(ke2,rv2,deg,m0,m2) 
+call keta2rv(ke1,rv1,m0,m1)
+call keta2rv(ke2,rv2,m0,m2) 
 
 dp(1:3)=rv2(1:3)-rv1(1:3)
 du(1:3)=rv2(4:6)-rv1(4:6)
@@ -886,23 +861,23 @@ return
 end subroutine
 !******************************************************   
 
-subroutine orb_dist_ma(ke1,ke2,dr,dv,deg,m0,m1,m2)
+subroutine orb_dist_ma(ke1,ke2,dr,dv,m0,m1,m2)
 !calculates the distance between two particles on heliocentric orbits with Keplerian elements ke1 and ke2
+!input angle units: deg
 !ke1=(a,e,i,w,OM,Mean anomaly)
 !
 implicit none
 
 real(kind=wp),dimension(1:6),intent(in)::ke1,ke2
-logical,optional,intent(in)::deg
-real(kind=wp),optional,intent(in)::m0,m1,m2
+real(kind=wp),intent(in)::m0,m1,m2
 
 real(kind=wp),intent(out)::dr,dv
 
 real(kind=wp),dimension(1:6)::ele1,ele2,rv1,rv2
 real(kind=wp),dimension(1:3)::dp,du
 
-call kema2rv(ke1,rv1,deg,m0,m1)
-call kema2rv(ke2,rv2,deg,m0,m2) 
+call kema2rv(ke1,rv1,m0,m1)
+call kema2rv(ke2,rv2,m0,m2) 
 
 dp(1:3)=rv2(1:3)-rv1(1:3)
 du(1:3)=rv2(4:6)-rv1(4:6)
@@ -915,24 +890,25 @@ return
 end subroutine
  
 !******************************************************************************
-subroutine orb_dist_tm(ke1,ke2,dr,dv2,deg,m0,m1,m2)
+subroutine orb_dist_tm(ke1,ke2,dr,dv2,m0,m1,m2)
 !calculates the distance between two particles on heliocentric orbits with Keplerian elements ke1 and ke2
 !ke1=(a,e,i,w,OM,true anomaly)
 !ke2=(a,e,i,w,OM,Mean anomaly)
-!MIXED ANGLES! OUTPUT SQUARED VELOCITIES!!!
+!input angle units: deg
+!MIXED ANGLES for orbits true anomaly and mean anomaly! 
+!OUTPUT SQUARED VELOCITIES!!!
 implicit none
 
 real(kind=wp),dimension(1:6),intent(in)::ke1,ke2
-logical,optional,intent(in)::deg
-real(kind=wp),optional,intent(in)::m0,m1,m2
+real(kind=wp),intent(in)::m0,m1,m2
 
 real(kind=wp),intent(out)::dr,dv2
 
 real(kind=wp),dimension(1:6)::rv1,rv2
 real(kind=wp),dimension(1:3)::dp,du
 
-call keta2rv(ke1,rv1,deg,m0,m1)
-call kema2rv(ke2,rv2,deg,m0,m2) 
+call keta2rv(ke1,rv1,m0,m1)
+call kema2rv(ke2,rv2,m0,m2) 
 
 dp(1:3)=rv2(1:3)-rv1(1:3)
 du(1:3)=rv2(4:6)-rv1(4:6)

@@ -36,7 +36,7 @@ module kepler_m
   call epoch2ma(meanmotion,epoch,ele(6),t_obs,ma_obs)
   ele(6)=ma_obs
   !transform heliocentric Keplerian orbital elements to heliocentric, ecliptic, Cartesian states
-  call kema2rv(ele,rv_out)
+  call kema2rv(ele,rv_out,mass1,mass2)
 
   close(21)
   return
@@ -62,7 +62,7 @@ module kepler_m
   call semia2n(ke_in(1),mass1,mass2,meanmotion)
   call epoch2ma(meanmotion,epoch,ke_in(6),t_obs,ele(6))
   ele(1:5)=ke_in(1:5)  
-  call kema2rv(ele,rv_out)
+  call kema2rv(ele,rv_out,mass1,mass2)
 
   return
   end subroutine
