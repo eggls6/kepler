@@ -21,10 +21,27 @@ program kepler_tst
       m1=1.d0
       m2=0.d0
 
-      call two_body_ke(oe0,epoch,t_obs,m1,m2,rv)
+      write(*,*)'--------------------------------------------------------'
+      write(*,*)'testing orbital element to heliocentric state conversion'
+      write(*,*)'Keplerian Orbital elements',oe0
+      call kema2rv(oe0,rv,m1,m2)
+      call rv2kema(rv,oe,m1,m2)
 
+      write(*,*)'difference in orbital elements after conversion'
+      write(*,*)oe-oe0
+      
+      write(*,*)'--------------------------------------------------------'
+      write(*,*)'testing two body propagation'
+      call two_body_ke(oe0,epoch,t_obs,m1,m2,rv)
+      write(*,*)'initial state at epoch',epoch
       write(*,*)rv
 
       call two_body_rv(rv,t_obs,epoch,m1,m2,rv0)
+      write(*,*)'final state at epoch'
       write(*,*)rv0
+
+      write(*,*)'--------------------------------------------------------'
+
+
+
 end program
